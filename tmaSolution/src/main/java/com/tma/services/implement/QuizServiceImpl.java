@@ -44,6 +44,7 @@ public class QuizServiceImpl implements QuizService {
 		Quiz quiz = quizRepository.findOne(id);
 		quiz.setQuizName(quizName);
 		quiz.setQuizDuration(quizDuration);
-		quiz.setQuestions(questions);
+		
+		quizRepository.save(quiz);
 	}
 }

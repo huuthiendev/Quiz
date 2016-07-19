@@ -11,4 +11,5 @@ public interface UserService {
 	User getUserById(Integer Id);
 	void save(User obj);
 	boolean updateUser(int id, String name, String password, int role);
+	User checkLogin(String user, String pass);
 }

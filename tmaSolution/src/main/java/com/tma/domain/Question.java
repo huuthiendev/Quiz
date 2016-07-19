@@ -24,6 +24,10 @@ public class Question {
 	@JoinColumn(name = "question_kind", referencedColumnName = "kind_name")
 	private QuestionKind questionKind;
 	
+	@ManyToOne
+	@JoinColumn(name = "quiz_id")
+	private Quiz quiz;
+	
 	@Column(name = "anwser_content")
 	private String anwserContent;
 	
@@ -124,6 +128,14 @@ public class Question {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Quiz getQuiz() {
+		return quiz;
+	}
+
+	public void setQuiz(Quiz quiz) {
+		this.quiz = quiz;
 	}
 
 	

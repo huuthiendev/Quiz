@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.tma.customField.UserView;
+
 @Entity
 @Table(name = "User", 
 	   uniqueConstraints = {@UniqueConstraint(columnNames = "user_name")})
@@ -17,24 +20,30 @@ public class User {
 	@Column(name = "id")
 	private int id;
 	
+	@JsonView(UserView.BasicView.class)
 	@Column(name = "user_name")
 	private String name;
 	
+	@JsonView(UserView.BasicView.class)
 	@Column(name = "password_hash")
 	private String passwordHash;
 	
+	@JsonView(UserView.BasicView.class)
 	@Column(name = "role")
 	private int role;
+	
 	
 	@Column(name = "deleted_flag")
 	private boolean deletedFlag;
 	
+	@JsonView(UserView.AdvancedView.class)
 	@Column(name = "created_by")
 	private int createdBy;
 	
 	@Column(name = "updated_by")
 	private int updatedBy;
 	
+	@JsonView(UserView.AdvancedView.class)
 	@Column(name = "created_at")
 	private Timestamp createdAt;
 	

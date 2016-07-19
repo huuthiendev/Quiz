@@ -1,6 +1,10 @@
 package com.tma.controllers;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.tma.authentication.Auth;
+import com.tma.customField.UserView;
 import com.tma.domain.User;
 import com.tma.services.UserService;
 
@@ -24,12 +31,15 @@ public class UserController {
 		this.userDao = userDao;
 	}
 
+	@JsonView(UserView.AdvancedView.class)
 	@RequestMapping(value = "/id={id}", method = RequestMethod.GET)
 	@ResponseBody
     public User findUser(@PathVariable int id) {
 	   return userDao.getUserById(id);
     }
    
+	@Auth(role = {Auth.Role.ADMIN})
+	@JsonView(UserView.BasicView.class)
 	@RequestMapping(method = RequestMethod.GET)
    	@ResponseBody
    	public List<User> listUsers() {
@@ -62,11 +72,37 @@ public class UserController {
    	{
 	   return userDao.updateUser(id, name, password, role);
    	}
-//   	
-//   	@RequestMapping(value = "/test", method = RequestMethod.GET)
-//   	@ResponseBody
-//   	public String name(@RequestParam("name") String name){
-//   		return userDao.findUserByQuery(name).getName();
-//   	}
+
+   	@RequestMapping(value="/login", method = RequestMethod.POST)
+	@ResponseBody
+	public String check_login(@RequestParam("user") String user, @RequestParam("pass") String pass, HttpSession session, HttpServletResponse response){
+   		User us = userDao.checkLogin(user, pass);
+		
+		if(us != null){
+			if(us.getRole()==1){
+				session.setAttribute("isLogin", true);
+				session.setAttribute("user", us.getName());
+				session.setAttribute("role", Auth.Role.ADMIN);
+			} else if(us.getRole()==2){
+				session.setAttribute("isLogin", true);
+				session.setAttribute("user", us.getName());
+				session.setAttribute("role", Auth.Role.MODERATOR);
+			} else {
+				session.setAttribute("isLogin", true);
+				session.setAttribute("user", us.getName());
+				session.setAttribute("role", Auth.Role.USER);
+			}
+			return "Login successful! Hi: "+ us.getName();
+		}
+		return "Username or password incorrect!";
+	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public void logout(HttpSession session, HttpServletResponse response) throws IOException {
+		session.removeAttribute("isLogin");
+		session.removeAttribute("user");
+		session.removeAttribute("role");
+		response.getWriter().print("Logout successful! Good bye!");	
+	}
    
 }

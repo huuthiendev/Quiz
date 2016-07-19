@@ -19,6 +19,7 @@ public class UserServiceImp implements UserService{
 	public void setRep(UserRepository rep) {
 		Rep = rep;
 	}
+	
 
 	@Override
 	public List<User> findAllUser() {
@@ -37,7 +38,7 @@ public class UserServiceImp implements UserService{
 		User user = new User();
 		
 		user.setName(name);
-		user.setPasswordHash(WebTool.encodeHashPass(pass));
+		user.setPasswordHash(pass);
 		user.setCreatedAt(WebTool.getTime());
 		user.setRole(role);
 		
@@ -66,5 +67,11 @@ public class UserServiceImp implements UserService{
 		user.setUpdatedAt(WebTool.getTime());
 		
 		return true;
+	}
+
+
+	@Override
+	public User checkLogin(String user, String pass) {
+		return Rep.checkLogin(user, pass);
 	}
 }

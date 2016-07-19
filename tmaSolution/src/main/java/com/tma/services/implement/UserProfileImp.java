@@ -20,16 +20,14 @@ public class UserProfileImp implements UserProfileService{
 	}
 
 	@Override
-	public void deleteUserProfile(Integer Id) {
-		userProfileRepo.delete(Id);
-		
-	}
-
-	
-	@Override
-	public void save(UserProfile userProfile) {
-		userProfileRepo.save(userProfile);
-		
+	public String deleteUserProfile(Integer Id) {
+		UserProfile userP = userProfileRepo.findOne(Id);
+		if (userP != null)
+		{
+			userProfileRepo.delete(Id);
+			return userP.getUser().getName() + "'s profile is deleted";
+		}
+		else return null;
 	}
 
 	@Override
